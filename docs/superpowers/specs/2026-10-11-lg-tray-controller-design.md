@@ -118,7 +118,8 @@ corpo traz `error.code` e `error.message`.
 |---|---|
 | Ligar / desligar | `{"operation": {"airConOperationMode": "POWER_ON" \| "POWER_OFF"}}` |
 | Modo | `{"airConJobMode": {"currentJobMode": "COOL"}}` |
-| Temperatura | `{"temperatureInUnits": {"targetTemperatureC": 23, "unit": "C"}}` |
+| Temperatura | `{"temperatureInUnits": {"targetTemperature": 23, "unit": "C"}}` |
+| Cancelar timer | `{"timer": {"relativeStopTimer": "UNSET"}}` |
 | Ventilação | `{"airFlow": {"windStrength": "HIGH"}}` |
 | Oscilação vertical | `{"windDirection": {"rotateUpDown": true}}` |
 | Oscilação horizontal | `{"windDirection": {"rotateLeftRight": true}}` |
