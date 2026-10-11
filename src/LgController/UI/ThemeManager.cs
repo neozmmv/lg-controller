@@ -3,7 +3,7 @@ using Microsoft.Win32;
 
 namespace LgController.UI;
 
-/// <summary>Mantém o dicionário de tema igual ao tema de aplicativos do Windows.</summary>
+/// <summary>Keeps the theme dictionary in sync with the Windows app theme.</summary>
 public static class ThemeManager
 {
     private const string PersonalizeKey =

@@ -1,6 +1,6 @@
 namespace LgController.Core;
 
-/// <summary>Cor de destaque de cada modo, usada pelo painel e pelo ícone da bandeja.</summary>
+/// <summary>Accent color for each mode, used by the panel and the tray icon.</summary>
 public static class ModePalette
 {
     public static (byte R, byte G, byte B) For(string? mode, bool isOn)

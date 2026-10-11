@@ -169,7 +169,7 @@ Regras:
 - Com o ar desligado, tudo abaixo do cabeçalho fica esmaecido e desabilitado.
 - No modo ventilar, o mostrador de temperatura fica desabilitado.
 - Tema claro ou escuro segue o Windows e troca sem reiniciar.
-- Textos em português.
+- Textos em inglês (decisão de 2026-10-11, depois da primeira versão).
 
 ### Ícone da bandeja
 

@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace LgController.UI;
 
-/// <summary>Arco de 270° com a parte preenchida proporcional a Value entre Minimum e Maximum.</summary>
+/// <summary>270° arc whose filled part is proportional to Value between Minimum and Maximum.</summary>
 public sealed class ArcGauge : FrameworkElement
 {
     private const double StartAngle = 135;

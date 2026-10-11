@@ -3,18 +3,18 @@ using LgController.Core;
 using LgController.ThinQ;
 
 const string Usage = """
-    Defina a variável de ambiente LG_THINQ_PAT (e, se não for BR, LG_THINQ_COUNTRY).
-    Comandos:
+    Set the LG_THINQ_PAT environment variable (and LG_THINQ_COUNTRY if not BR).
+    Commands:
       list
-      dump  <deviceId> <pasta>      grava real-profile.json e real-state.json
-      show  <deviceId>              mostra capacidades e estado interpretados
+      dump  <deviceId> <folder>     writes real-profile.json and real-state.json
+      show  <deviceId>              shows the parsed capabilities and state
       power <deviceId> on|off
-      temp  <deviceId> <graus>
-      mode  <deviceId> <MODO>
-      wind  <deviceId> <VELOCIDADE>
+      temp  <deviceId> <degrees>
+      mode  <deviceId> <MODE>
+      wind  <deviceId> <SPEED>
       swing <deviceId> on|off
       save  <deviceId> on|off
-      timer <deviceId> <minutos>    0 cancela
+      timer <deviceId> <minutes>    0 cancels
     """;
 
 var token = Environment.GetEnvironmentVariable("LG_THINQ_PAT");
@@ -57,12 +57,12 @@ try
             File.WriteAllText(
                 Path.Combine(arg, "real-state.json"),
                 JsonSerializer.Serialize(await client.GetStateAsync(id), indented));
-            Console.WriteLine($"Gravado em {Path.GetFullPath(arg)}");
+            Console.WriteLine($"Written to {Path.GetFullPath(arg)}");
             break;
         case "show":
             Console.WriteLine(caps);
-            Console.WriteLine($"Modos: {string.Join(", ", caps.Modes)}");
-            Console.WriteLine($"Vento: {string.Join(", ", caps.WindStrengths)}");
+            Console.WriteLine($"Modes: {string.Join(", ", caps.Modes)}");
+            Console.WriteLine($"Wind: {string.Join(", ", caps.WindStrengths)}");
             Console.WriteLine(AcStateParser.Parse(await client.GetStateAsync(id), caps));
             break;
         case "power":
@@ -96,6 +96,6 @@ try
 }
 catch (ThinQException ex)
 {
-    Console.Error.WriteLine($"Erro {ex.Code} ({ex.Kind}): {ex.Message}");
+    Console.Error.WriteLine($"Error {ex.Code} ({ex.Kind}): {ex.Message}");
     return 2;
 }

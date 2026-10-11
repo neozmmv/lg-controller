@@ -8,7 +8,7 @@ namespace LgController.UI;
 
 public sealed class TrayIcon : IDisposable
 {
-    private static readonly CultureInfo Culture = CultureInfo.GetCultureInfo("pt-BR");
+    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
     private readonly TaskbarIcon _icon = new();
     private readonly MenuItem _powerItem;
@@ -17,16 +17,16 @@ public sealed class TrayIcon : IDisposable
 
     public TrayIcon(Action toggleFlyout, Action togglePower, Action openSettings, Action exit)
     {
-        _powerItem = new MenuItem { Header = "Ligar" };
+        _powerItem = new MenuItem { Header = "Turn on" };
         _powerItem.Click += (_, _) => togglePower();
 
-        var autoStart = new MenuItem { Header = "Iniciar com o Windows", IsCheckable = true, IsChecked = AutoStart.IsEnabled };
+        var autoStart = new MenuItem { Header = "Start with Windows", IsCheckable = true, IsChecked = AutoStart.IsEnabled };
         autoStart.Click += (_, _) => AutoStart.Set(autoStart.IsChecked);
 
-        var settings = new MenuItem { Header = "Configurações" };
+        var settings = new MenuItem { Header = "Settings" };
         settings.Click += (_, _) => openSettings();
 
-        var quit = new MenuItem { Header = "Sair" };
+        var quit = new MenuItem { Header = "Exit" };
         quit.Click += (_, _) => exit();
 
         _icon.ContextMenu = new ContextMenu { Items = { _powerItem, autoStart, settings, new Separator(), quit } };
@@ -53,7 +53,7 @@ public sealed class TrayIcon : IDisposable
             previous?.Dispose();
         }
 
-        _powerItem.Header = isOn ? "Desligar" : "Ligar";
+        _powerItem.Header = isOn ? "Turn off" : "Turn on";
         _powerItem.IsEnabled = state is not null;
         _icon.ToolTipText = Describe(state, hasError, alias);
     }
@@ -66,11 +66,11 @@ public sealed class TrayIcon : IDisposable
 
     private static string Describe(AcState? state, bool hasError, string alias)
     {
-        if (state is null) return hasError ? $"{alias}: sem conexão" : $"{alias}: conectando…";
-        var status = state.IsOn ? "Ligado" : "Desligado";
+        if (state is null) return hasError ? $"{alias}: no connection" : $"{alias}: connecting…";
+        var status = state.IsOn ? "On" : "Off";
         var target = state.IsOn && state.TargetTemperature is { } t ? $", {t.ToString("0.#", Culture)}°" : "";
-        var room = state.CurrentTemperature is { } c ? $" (ambiente {c.ToString("0.#", Culture)}°)" : "";
-        var warning = hasError ? " · sem conexão" : "";
+        var room = state.CurrentTemperature is { } c ? $" (room {c.ToString("0.#", Culture)}°)" : "";
+        var warning = hasError ? " · no connection" : "";
         return $"{alias}: {status}{target}{room}{warning}";
     }
 }

@@ -13,7 +13,7 @@ public class FlyoutViewModelTests
     private async Task<(FlyoutViewModel Vm, AcController Controller)> CreateAsync()
     {
         var controller = new AcController(_client, "dev-1", _time);
-        var vm = new FlyoutViewModel(controller, "Quarto", _time);
+        var vm = new FlyoutViewModel(controller, "Bedroom", _time);
         await controller.RefreshAsync();
         return (vm, controller);
     }
@@ -21,9 +21,9 @@ public class FlyoutViewModelTests
     [Fact]
     public void BeforeFirstState_ControlsAreDisabled()
     {
-        var vm = new FlyoutViewModel(new AcController(_client, "dev-1", _time), "Quarto", _time);
+        var vm = new FlyoutViewModel(new AcController(_client, "dev-1", _time), "Bedroom", _time);
 
-        Assert.Equal("Quarto", vm.DeviceName);
+        Assert.Equal("Bedroom", vm.DeviceName);
         Assert.False(vm.ControlsEnabled);
         Assert.False(vm.PowerEnabled);
         Assert.Equal("--", vm.TargetTemperatureText);
@@ -38,16 +38,16 @@ public class FlyoutViewModelTests
         Assert.True(vm.ControlsEnabled);
         Assert.True(vm.PowerEnabled);
         Assert.Equal("23°", vm.TargetTemperatureText);
-        Assert.Equal("Ambiente 26,5°", vm.RoomTemperatureText);
+        Assert.Equal("Room 26.5°", vm.RoomTemperatureText);
         Assert.Equal(23, vm.TargetTemperature);
         Assert.Equal(16, vm.MinTemperature);
         Assert.Equal(30, vm.MaxTemperature);
-        Assert.Equal(["Frio", "Secar", "Ventilar", "Auto"], vm.Modes.Select(m => m.Label));
+        Assert.Equal(["Cool", "Dry", "Fan", "Auto"], vm.Modes.Select(m => m.Label));
         Assert.Equal("COOL", vm.Modes.Single(m => m.IsSelected).Value);
-        Assert.Equal(["Baixa", "Média", "Alta", "Auto"], vm.WindStrengths.Select(w => w.Label));
+        Assert.Equal(["Low", "Medium", "High", "Auto"], vm.WindStrengths.Select(w => w.Label));
         Assert.Equal("MID", vm.WindStrengths.Single(w => w.IsSelected).Value);
         Assert.True(vm.SwingVertical);
-        Assert.Equal("Desliga em 1 h 30 min", vm.TimerText);
+        Assert.Equal("Turns off in 1 h 30 min", vm.TimerText);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class FlyoutViewModelTests
         Assert.False(vm.ShowSwingHorizontal);
         Assert.True(vm.ShowPowerSave);
         Assert.True(vm.ShowTimer);
-        Assert.Equal(["Desativado", "30 min", "1 h", "2 h", "4 h"], vm.TimerOptions.Select(t => t.Label));
+        Assert.Equal(["Off", "30 min", "1 h", "2 h", "4 h"], vm.TimerOptions.Select(t => t.Label));
     }
 
     [Fact]
@@ -95,12 +95,12 @@ public class FlyoutViewModelTests
         vm.IncreaseTemperatureCommand.Execute(null);
 
         Assert.Equal(23.5, controller.State!.TargetTemperature);
-        Assert.Equal("23,5°", vm.TargetTemperatureText);
+        Assert.Equal("23.5°", vm.TargetTemperatureText);
 
         vm.DecreaseTemperatureCommand.Execute(null);
         vm.DecreaseTemperatureCommand.Execute(null);
 
-        Assert.Equal("22,5°", vm.TargetTemperatureText);
+        Assert.Equal("22.5°", vm.TargetTemperatureText);
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class FlyoutViewModelTests
         await controller.RefreshAsync();
 
         Assert.True(vm.HasBanner);
-        Assert.Equal("Token inválido ou expirado.", vm.BannerText);
+        Assert.Equal("Invalid or expired token.", vm.BannerText);
         Assert.True(vm.ShowSetupButton);
     }
 
@@ -169,7 +169,7 @@ public class FlyoutViewModelTests
 
         await controller.RefreshAsync();
 
-        Assert.Equal("O aparelho está offline.", vm.BannerText);
+        Assert.Equal("The device is offline.", vm.BannerText);
         Assert.False(vm.ShowSetupButton);
         Assert.False(vm.ControlsEnabled);
         Assert.False(vm.PowerEnabled);
@@ -185,7 +185,7 @@ public class FlyoutViewModelTests
         _time.Advance(AcController.DebounceDelay);
 
         Assert.True(vm.HasToast);
-        Assert.Equal("O aparelho recusou o comando.", vm.ToastText);
+        Assert.Equal("The device rejected the command.", vm.ToastText);
         Assert.Equal("23°", vm.TargetTemperatureText);
 
         _time.Advance(FlyoutViewModel.ToastDuration);

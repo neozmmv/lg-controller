@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LgController.UI;
 
-/// <summary>Uma opção de um seletor do painel (modo, velocidade, timer).</summary>
+/// <summary>One option of a panel selector (mode, speed, timer).</summary>
 public sealed partial class OptionItem(string value, string label, string glyph = "", string glyphFont = OptionCatalog.IconFont)
     : ObservableObject
 {
@@ -21,24 +21,24 @@ public static class OptionCatalog
 
     public static OptionItem Mode(string value) => value switch
     {
-        "COOL" => new(value, "Frio", ""),
-        "HEAT" => new(value, "Aquecer", ""),
-        "AIR_DRY" => new(value, "Secar", ""),
-        "FAN" => new(value, "Ventilar", "≋", SymbolFont),
+        "COOL" => new(value, "Cool", ""),
+        "HEAT" => new(value, "Heat", ""),
+        "AIR_DRY" => new(value, "Dry", ""),
+        "FAN" => new(value, "Fan", "≋", SymbolFont),
         "AUTO" => new(value, "Auto", ""),
-        "AIR_CLEAN" => new(value, "Purificar", "✦", SymbolFont),
-        "ENERGY_SAVING" => new(value, "Economia", "☘", SymbolFont),
+        "AIR_CLEAN" => new(value, "Purify", "✦", SymbolFont),
+        "ENERGY_SAVING" => new(value, "Eco", "☘", SymbolFont),
         _ => new(value, Humanize(value), "●", SymbolFont),
     };
 
     public static OptionItem Wind(string value) => new(value, value switch
     {
-        "SLOW" => "Mínima",
-        "LOW" => "Baixa",
-        "LOW_MID" => "Baixa+",
-        "MID" => "Média",
-        "MID_HIGH" => "Média+",
-        "HIGH" => "Alta",
+        "SLOW" => "Lowest",
+        "LOW" => "Low",
+        "LOW_MID" => "Low+",
+        "MID" => "Medium",
+        "MID_HIGH" => "Medium+",
+        "HIGH" => "High",
         "POWER" => "Turbo",
         "AUTO" => "Auto",
         "NATURE" => "Natural",
@@ -47,7 +47,7 @@ public static class OptionCatalog
 
     public static OptionItem Timer(int minutes) => new(minutes.ToString(), minutes switch
     {
-        <= 0 => "Desativado",
+        <= 0 => "Off",
         < 60 => $"{minutes} min",
         _ => $"{minutes / 60} h",
     });

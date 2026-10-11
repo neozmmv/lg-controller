@@ -20,7 +20,7 @@ public sealed class SettingsStore(string? directory = null)
 
     public static string NewClientId() => $"thinq-open-{Guid.NewGuid()}";
 
-    /// <summary>Nulo quando não há configuração utilizável; quem chama abre a tela de configuração.</summary>
+    /// <summary>Null when there are no usable settings; the caller opens the setup window.</summary>
     public AppSettings? Load()
     {
         try

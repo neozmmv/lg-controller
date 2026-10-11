@@ -22,7 +22,7 @@ public static class Log
         }
         catch (IOException)
         {
-            // O log não pode derrubar o aplicativo.
+            // Logging must never crash the app.
         }
         catch (UnauthorizedAccessException)
         {

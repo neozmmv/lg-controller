@@ -49,7 +49,7 @@
             <TranslateTransform x:Name="RootShift" />
         </Border.RenderTransform>
         <StackPanel>
-            <!-- Cabeçalho -->
+            <!-- Header -->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -62,21 +62,21 @@
                                FontSize="12" Margin="0,2,0,0" />
                 </StackPanel>
                 <ToggleButton Grid.Column="1" Style="{StaticResource PowerButton}" IsChecked="{Binding IsOn}"
-                              IsEnabled="{Binding PowerEnabled}" ToolTip="Ligar ou desligar" />
+                              IsEnabled="{Binding PowerEnabled}" ToolTip="Turn on or off" />
             </Grid>
 
-            <!-- Erro de conexão -->
+            <!-- Connection error -->
             <Border Background="{DynamicResource BannerBrush}" CornerRadius="10" Padding="12,9" Margin="0,14,0,0"
                     Visibility="{Binding HasBanner, Converter={StaticResource BoolVis}}">
                 <DockPanel>
-                    <Button DockPanel.Dock="Right" Content="Configurar" Style="{StaticResource PrimaryButton}"
+                    <Button DockPanel.Dock="Right" Content="Set up" Style="{StaticResource PrimaryButton}"
                             Padding="10,4" FontSize="12" Command="{Binding OpenSettingsCommand}"
                             Visibility="{Binding ShowSetupButton, Converter={StaticResource BoolVis}}" />
                     <TextBlock Text="{Binding BannerText}" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="13" />
                 </DockPanel>
             </Border>
 
-            <!-- Temperatura -->
+            <!-- Temperature -->
             <Grid Height="214" Margin="0,14,0,0" Style="{StaticResource Section}"
                   IsEnabled="{Binding TemperatureEnabled}"
                   Visibility="{Binding ShowTemperature, Converter={StaticResource BoolVis}}">
@@ -91,35 +91,35 @@
                                HorizontalAlignment="Center" Margin="0,-4,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                    <Button Style="{StaticResource RoundButton}" Content="−" ToolTip="Diminuir"
+                    <Button Style="{StaticResource RoundButton}" Content="−" ToolTip="Decrease"
                             Command="{Binding DecreaseTemperatureCommand}" />
-                    <Button Style="{StaticResource RoundButton}" Content="+" ToolTip="Aumentar" Margin="44,0,0,0"
+                    <Button Style="{StaticResource RoundButton}" Content="+" ToolTip="Increase" Margin="44,0,0,0"
                             Command="{Binding IncreaseTemperatureCommand}" />
                 </StackPanel>
             </Grid>
 
-            <!-- Modo, ventilação e extras -->
+            <!-- Mode, fan speed and extras -->
             <StackPanel Style="{StaticResource Section}" IsEnabled="{Binding ControlsEnabled}">
                 <StackPanel Visibility="{Binding ShowModes, Converter={StaticResource BoolVis}}">
-                    <TextBlock Text="Modo" Style="{StaticResource Caption}" />
+                    <TextBlock Text="Mode" Style="{StaticResource Caption}" />
                     <ItemsControl ItemsSource="{Binding Modes}" ItemTemplate="{StaticResource IconOption}"
                                   ItemsPanel="{StaticResource OneRow}" Margin="-3,0" />
                 </StackPanel>
 
                 <StackPanel Visibility="{Binding ShowWind, Converter={StaticResource BoolVis}}">
-                    <TextBlock Text="Ventilação" Style="{StaticResource Caption}" />
+                    <TextBlock Text="Fan speed" Style="{StaticResource Caption}" />
                     <ItemsControl ItemsSource="{Binding WindStrengths}" ItemTemplate="{StaticResource WindOption}"
                                   ItemsPanel="{StaticResource OneRow}" Margin="-3,0" />
                 </StackPanel>
 
                 <StackPanel Margin="3,12,3,0">
-                    <CheckBox Style="{StaticResource Switch}" Content="Oscilar para cima e para baixo"
+                    <CheckBox Style="{StaticResource Switch}" Content="Swing up and down"
                               IsChecked="{Binding SwingVertical}"
                               Visibility="{Binding ShowSwingVertical, Converter={StaticResource BoolVis}}" />
-                    <CheckBox Style="{StaticResource Switch}" Content="Oscilar para os lados"
+                    <CheckBox Style="{StaticResource Switch}" Content="Swing left and right"
                               IsChecked="{Binding SwingHorizontal}"
                               Visibility="{Binding ShowSwingHorizontal, Converter={StaticResource BoolVis}}" />
-                    <CheckBox Style="{StaticResource Switch}" Content="Economia de energia"
+                    <CheckBox Style="{StaticResource Switch}" Content="Energy saving"
                               IsChecked="{Binding PowerSave}"
                               Visibility="{Binding ShowPowerSave, Converter={StaticResource BoolVis}}" />
                 </StackPanel>
@@ -128,14 +128,14 @@
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Right" Text="{Binding TimerText}" Style="{StaticResource Caption}"
                                    Foreground="{DynamicResource AccentBrush}" Margin="0,16,3,5" />
-                        <TextBlock Text="Desligar em" Style="{StaticResource Caption}" />
+                        <TextBlock Text="Turn off in" Style="{StaticResource Caption}" />
                     </DockPanel>
                     <ItemsControl ItemsSource="{Binding TimerOptions}" ItemTemplate="{StaticResource TimerOption}"
                                   ItemsPanel="{StaticResource OneRow}" Margin="-3,0" />
                 </StackPanel>
             </StackPanel>
 
-            <!-- Aviso temporário de comando recusado -->
+            <!-- Temporary notice for a rejected command -->
             <Border Background="{DynamicResource BannerBrush}" CornerRadius="10" Padding="12,8" Margin="0,14,0,0"
                     Visibility="{Binding HasToast, Converter={StaticResource BoolVis}}">
                 <TextBlock Text="{Binding ToastText}" TextWrapping="Wrap" FontSize="13" />

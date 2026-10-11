@@ -37,7 +37,7 @@ public class ThinQClientTests
     {
         var (client, _) = Create(HttpStatusCode.OK, """
             {"response":[
-              {"deviceId":"abc","deviceInfo":{"deviceType":"DEVICE_AIR_CONDITIONER","modelName":"RAC","alias":"Quarto"}},
+              {"deviceId":"abc","deviceInfo":{"deviceType":"DEVICE_AIR_CONDITIONER","modelName":"RAC","alias":"Bedroom"}},
               {"deviceId":"def","deviceInfo":{"deviceType":"DEVICE_WASHER","modelName":"W1"}},
               {"noId":true}
             ]}
@@ -46,7 +46,7 @@ public class ThinQClientTests
         var devices = await client.ListDevicesAsync();
 
         Assert.Equal(2, devices.Count);
-        Assert.Equal(new DeviceInfo("abc", "DEVICE_AIR_CONDITIONER", "Quarto", "RAC"), devices[0]);
+        Assert.Equal(new DeviceInfo("abc", "DEVICE_AIR_CONDITIONER", "Bedroom", "RAC"), devices[0]);
         Assert.Equal("def", devices[1].Alias);
     }
 
@@ -95,12 +95,12 @@ public class ThinQClientTests
     [InlineData("2000", ThinQErrorKind.Unknown)]
     public async Task ApiError_IsClassified(string code, ThinQErrorKind kind)
     {
-        var (client, _) = Create(HttpStatusCode.BadRequest, $$$"""{"error":{"code":"{{{code}}}","message":"falhou"}}""");
+        var (client, _) = Create(HttpStatusCode.BadRequest, $$$"""{"error":{"code":"{{{code}}}","message":"failed"}}""");
 
         var ex = await Assert.ThrowsAsync<ThinQException>(() => client.GetStateAsync("abc"));
 
         Assert.Equal(code, ex.Code);
-        Assert.Equal("falhou", ex.Message);
+        Assert.Equal("failed", ex.Message);
         Assert.Equal(kind, ex.Kind);
     }
 

@@ -8,7 +8,7 @@ public sealed class ThinQException(string code, string message, ThinQErrorKind k
     public string Code { get; } = code;
     public ThinQErrorKind Kind { get; } = kind;
 
-    // Códigos da tabela ThinQAPIErrorCodes do SDK oficial.
+    // Codes from the ThinQAPIErrorCodes table in the official SDK.
     public static ThinQErrorKind KindFor(string code, int httpStatus) => code switch
     {
         "1103" or "1218" or "1302" => ThinQErrorKind.Unauthorized,

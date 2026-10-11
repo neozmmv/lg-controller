@@ -12,7 +12,7 @@ public sealed partial class FlyoutViewModel : ObservableObject
 {
     public static readonly TimeSpan ToastDuration = TimeSpan.FromSeconds(4);
 
-    private static readonly CultureInfo Culture = CultureInfo.GetCultureInfo("pt-BR");
+    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
     private static readonly int[] TimerMinutes = [30, 60, 120, 240];
 
     private readonly AcController _controller;
@@ -140,7 +140,7 @@ public sealed partial class FlyoutViewModel : ObservableObject
             MaxTemperature = caps.MaxTemperature;
             TargetTemperature = state.TargetTemperature ?? caps.MinTemperature;
             TargetTemperatureText = state.TargetTemperature is { } target ? $"{target.ToString("0.#", Culture)}°" : "--";
-            RoomTemperatureText = state.CurrentTemperature is { } room ? $"Ambiente {room.ToString("0.#", Culture)}°" : "";
+            RoomTemperatureText = state.CurrentTemperature is { } room ? $"Room {room.ToString("0.#", Culture)}°" : "";
             ModeText = state.Mode is { } mode ? OptionCatalog.Mode(mode).Label : "";
 
             SyncOptions(Modes, caps.Modes.Select(OptionCatalog.Mode), state.Mode);
@@ -187,7 +187,7 @@ public sealed partial class FlyoutViewModel : ObservableObject
         var hours = total / 60;
         var rest = total % 60;
         var text = hours > 0 && rest > 0 ? $"{hours} h {rest} min" : hours > 0 ? $"{hours} h" : $"{rest} min";
-        return $"Desliga em {text}";
+        return $"Turns off in {text}";
     }
 
     private void ShowToast(ThinQException error)

@@ -14,7 +14,7 @@ public sealed class FakeThinQClient : IThinQClient
     public ThinQException? ListError { get; set; }
     public ThinQException? StateError { get; set; }
     public ThinQException? ControlError { get; set; }
-    /// <summary>Quando definido, o envio fica em voo até o teste completar a tarefa.</summary>
+    /// <summary>When set, the send stays in flight until the test completes the task.</summary>
     public TaskCompletionSource? ControlGate { get; set; }
 
     public Task<IReadOnlyList<DeviceInfo>> ListDevicesAsync(CancellationToken ct = default) =>

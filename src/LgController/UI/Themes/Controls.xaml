@@ -4,7 +4,7 @@
     <BooleanToVisibilityConverter x:Key="BoolVis" />
     <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
-    <!-- Bloco do painel que esmaece quando desabilitado. -->
+    <!-- Panel block that fades when disabled. -->
     <Style x:Key="Section" TargetType="FrameworkElement">
         <Style.Triggers>
             <Trigger Property="IsEnabled" Value="False">
@@ -13,7 +13,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Opção de seletor; o DataContext é um OptionItem. -->
+    <!-- Selector option; the DataContext is an OptionItem. -->
     <Style x:Key="ChipButton" TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="Background" Value="{DynamicResource CardBrush}" />

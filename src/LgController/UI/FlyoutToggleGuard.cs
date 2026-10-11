@@ -1,8 +1,8 @@
 namespace LgController.UI;
 
 /// <summary>
-/// Clicar no ícone com o painel aberto tira o foco do painel, que se fecha, e logo depois chega o clique.
-/// Sem esta guarda o painel reabriria.
+/// Clicking the icon while the panel is open takes focus from the panel, which closes, and then the click arrives.
+/// Without this guard the panel would reopen.
 /// </summary>
 public sealed class FlyoutToggleGuard(TimeProvider time)
 {

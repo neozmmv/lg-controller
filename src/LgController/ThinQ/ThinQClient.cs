@@ -81,11 +81,11 @@ public sealed class ThinQClient : IThinQClient
         }
         catch (HttpRequestException ex)
         {
-            throw new ThinQException("network", "Sem conexão com o servidor da LG.", ThinQErrorKind.Network, ex);
+            throw new ThinQException("network", "Could not reach the LG server.", ThinQErrorKind.Network, ex);
         }
         catch (TaskCanceledException ex) when (!ct.IsCancellationRequested)
         {
-            throw new ThinQException("timeout", "O servidor da LG não respondeu.", ThinQErrorKind.Network, ex);
+            throw new ThinQException("timeout", "The LG server did not respond.", ThinQErrorKind.Network, ex);
         }
 
         using (response)

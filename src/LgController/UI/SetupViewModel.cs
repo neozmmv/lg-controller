@@ -51,7 +51,7 @@ public sealed partial class SetupViewModel : ObservableObject
         var country = CountryCode.Trim().ToUpperInvariant();
         if (token.Length == 0)
         {
-            ErrorText = "Informe o token.";
+            ErrorText = "Enter the token.";
             return;
         }
 
@@ -63,7 +63,7 @@ public sealed partial class SetupViewModel : ObservableObject
         }
         catch (ArgumentException)
         {
-            ErrorText = "País não suportado. Use o código de duas letras, como BR.";
+            ErrorText = "Unsupported country. Use the two-letter code, such as BR.";
             return;
         }
 
@@ -85,7 +85,7 @@ public sealed partial class SetupViewModel : ObservableObject
 
         if (Devices.Count == 0)
         {
-            ErrorText = "Nenhum ar-condicionado encontrado nesta conta.";
+            ErrorText = "No air conditioner found on this account.";
             return;
         }
 

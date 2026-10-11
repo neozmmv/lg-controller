@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 
 namespace LgController.Core;
 
-/// <summary>Monta o corpo do POST de controle para cada ação.</summary>
+/// <summary>Builds the control POST body for each action.</summary>
 public static class AcCommands
 {
     public static JsonObject Power(bool on) =>
@@ -27,7 +27,7 @@ public static class AcCommands
 
     public static JsonObject PowerSave(bool on) => Wrap("powerSave", "powerSaveEnabled", on);
 
-    /// <summary>Zero ou menos cancela o timer.</summary>
+    /// <summary>Zero or less cancels the timer.</summary>
     public static JsonObject StopTimer(int minutes)
     {
         if (minutes <= 0) return Wrap("timer", "relativeStopTimer", "UNSET");

@@ -10,7 +10,7 @@ public static class TrayIconRenderer
 {
     private const string PowerGlyph = "";
 
-    /// <summary>Quadrado arredondado na cor dada, com a temperatura ou, se <paramref name="text"/> for nulo, o símbolo de energia.</summary>
+    /// <summary>Rounded square in the given color, with the temperature or, if <paramref name="text"/> is null, the power symbol.</summary>
     public static Icon Render(string? text, (byte R, byte G, byte B) color, bool alert)
     {
         using var bitmap = new Bitmap(32, 32, PixelFormat.Format32bppArgb);

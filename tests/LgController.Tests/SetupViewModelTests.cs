@@ -18,9 +18,9 @@ public sealed class SetupViewModelTests : IDisposable
     private SetupViewModel Create(AppSettings? existing = null) =>
         new(creds => { _used = creds; return _client; }, new SettingsStore(_dir), existing);
 
-    private static readonly DeviceInfo Ac1 = new("ac-1", "DEVICE_AIR_CONDITIONER", "Quarto", "RAC");
-    private static readonly DeviceInfo Ac2 = new("ac-2", "DEVICE_AIR_CONDITIONER", "Sala", "RAC");
-    private static readonly DeviceInfo Washer = new("w-1", "DEVICE_WASHER", "Lavadora", "W");
+    private static readonly DeviceInfo Ac1 = new("ac-1", "DEVICE_AIR_CONDITIONER", "Bedroom", "RAC");
+    private static readonly DeviceInfo Ac2 = new("ac-2", "DEVICE_AIR_CONDITIONER", "Living room", "RAC");
+    private static readonly DeviceInfo Washer = new("w-1", "DEVICE_WASHER", "Washer", "W");
 
     [Fact]
     public async Task Connect_ListsOnlyAirConditioners_AndSelectsTheOnlyOne()
@@ -62,7 +62,7 @@ public sealed class SetupViewModelTests : IDisposable
 
         await vm.ConnectCommand.ExecuteAsync(null);
 
-        Assert.Equal("Informe o token.", vm.ErrorText);
+        Assert.Equal("Enter the token.", vm.ErrorText);
         Assert.Null(_used);
     }
 
@@ -75,7 +75,7 @@ public sealed class SetupViewModelTests : IDisposable
 
         await vm.ConnectCommand.ExecuteAsync(null);
 
-        Assert.Equal("País não suportado. Use o código de duas letras, como BR.", vm.ErrorText);
+        Assert.Equal("Unsupported country. Use the two-letter code, such as BR.", vm.ErrorText);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public sealed class SetupViewModelTests : IDisposable
 
         await vm.ConnectCommand.ExecuteAsync(null);
 
-        Assert.Equal("Nenhum ar-condicionado encontrado nesta conta.", vm.ErrorText);
+        Assert.Equal("No air conditioner found on this account.", vm.ErrorText);
         Assert.Empty(vm.Devices);
     }
 
@@ -100,7 +100,7 @@ public sealed class SetupViewModelTests : IDisposable
 
         await vm.ConnectCommand.ExecuteAsync(null);
 
-        Assert.Equal("Token inválido ou expirado.", vm.ErrorText);
+        Assert.Equal("Invalid or expired token.", vm.ErrorText);
         Assert.False(vm.IsBusy);
     }
 
@@ -121,13 +121,13 @@ public sealed class SetupViewModelTests : IDisposable
         Assert.Equal(vm.Result, stored);
         Assert.Equal("pat-1", stored.Token);
         Assert.Equal("ac-1", stored.DeviceId);
-        Assert.Equal("Quarto", stored.DeviceAlias);
+        Assert.Equal("Bedroom", stored.DeviceAlias);
     }
 
     [Fact]
     public void ExistingSettings_PrefillFieldsAndKeepClientId()
     {
-        var vm = Create(new AppSettings("old-pat", "PT", "thinq-open-keep", "ac-9", "Antigo"));
+        var vm = Create(new AppSettings("old-pat", "PT", "thinq-open-keep", "ac-9", "Old"));
 
         Assert.Equal("old-pat", vm.Token);
         Assert.Equal("PT", vm.CountryCode);
@@ -137,7 +137,7 @@ public sealed class SetupViewModelTests : IDisposable
     public async Task ExistingSettings_ReuseClientId()
     {
         _client.Devices.Add(Ac1);
-        var vm = Create(new AppSettings("old-pat", "BR", "thinq-open-keep", "ac-9", "Antigo"));
+        var vm = Create(new AppSettings("old-pat", "BR", "thinq-open-keep", "ac-9", "Old"));
 
         await vm.ConnectCommand.ExecuteAsync(null);
 

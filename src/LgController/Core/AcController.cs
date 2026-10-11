@@ -4,8 +4,8 @@ using LgController.ThinQ;
 namespace LgController.Core;
 
 /// <summary>
-/// Guarda o estado do aparelho, aplica comandos de forma otimista e os envia agrupados.
-/// Todo acesso deve acontecer na thread para a qual <c>dispatch</c> encaminha.
+/// Holds the device state, applies commands optimistically and sends them debounced.
+/// All access must happen on the thread that <c>dispatch</c> forwards to.
 /// </summary>
 public sealed class AcController : IDisposable
 {
@@ -47,10 +47,10 @@ public sealed class AcController : IDisposable
 
     public AcCapabilities? Capabilities { get; private set; }
 
-    /// <summary>Erro da última leitura; nulo quando a última leitura deu certo.</summary>
+    /// <summary>Error from the last read; null when the last read succeeded.</summary>
     public ThinQException? ConnectionError { get; private set; }
 
-    /// <summary>Último estado confirmado com os comandos pendentes aplicados por cima.</summary>
+    /// <summary>Last confirmed state with the pending commands applied on top.</summary>
     public AcState? State =>
         _confirmed is null ? null : _pending.Values.Aggregate(_confirmed, (state, change) => change.Apply(state));
 

@@ -31,6 +31,6 @@ public static class ThinQRegion
         if (Kic.Contains(code)) return "kic";
         if (Aic.Contains(code)) return "aic";
         if (Eic.Contains(code)) return "eic";
-        throw new ArgumentException($"País não suportado: {countryCode}", nameof(countryCode));
+        throw new ArgumentException($"Unsupported country: {countryCode}", nameof(countryCode));
     }
 }

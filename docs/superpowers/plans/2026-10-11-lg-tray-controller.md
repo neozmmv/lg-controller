@@ -18,7 +18,7 @@
 - Cabeçalhos em toda requisição: `Authorization: Bearer {PAT}`, `x-country`, `x-message-id` (UUID v4 em base64 url-safe sem `=`, 22 caracteres), `x-client-id` (`thinq-open-{uuid}`), `x-api-key: v6GFvkweNo7DK7yD3ylIZ9w52aKBU0eJ7wLXkSR3`, `x-service-phase: OP`. O `POST` de controle leva também `x-conditional-control: true`.
 - Agrupamento de comandos: 600 ms por tipo. Releitura de confirmação: 2 s. Polling: 30 s com o painel aberto, 5 min fechado. Pausa após limite de chamadas: 1 min.
 - Configuração em `%APPDATA%\LgController\settings.json`; token protegido com DPAPI no escopo `CurrentUser`. Log em `%APPDATA%\LgController\log.txt`.
-- Painel com 360 px de largura. Todos os textos da interface em português.
+- Painel com 360 px de largura. Todos os textos da interface em inglês (mudança pedida depois da execução; o código abaixo ainda mostra os textos originais em português).
 - Só aparece o controle que o perfil do aparelho declara como gravável.
 - O token nunca é escrito em log, console ou arquivo fora do `settings.json` protegido.
 

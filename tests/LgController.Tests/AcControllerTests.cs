@@ -15,7 +15,7 @@ public class AcControllerTests
     private static string Temp(double value) =>
         $$$"""{"temperatureInUnits":{"targetTemperature":{{{value.ToString(System.Globalization.CultureInfo.InvariantCulture)}}},"unit":"C"}}""";
 
-    private static readonly ThinQException Rejected = new("2208", "falhou", ThinQErrorKind.CommandRejected);
+    private static readonly ThinQException Rejected = new("2208", "failed", ThinQErrorKind.CommandRejected);
 
     [Fact]
     public async Task Refresh_LoadsCapabilitiesAndState()
@@ -206,7 +206,7 @@ public class AcControllerTests
     {
         await _controller.RefreshAsync();
         _controller.Start();
-        _client.StateError = new ThinQException("1306", "limite", ThinQErrorKind.RateLimited);
+        _client.StateError = new ThinQException("1306", "limit", ThinQErrorKind.RateLimited);
         _controller.SetPanelOpen(true);
         var calls = _client.StateCalls;
         _client.StateError = null;

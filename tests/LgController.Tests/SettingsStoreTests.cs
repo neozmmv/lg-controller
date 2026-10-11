@@ -6,7 +6,7 @@ namespace LgController.Tests;
 public sealed class SettingsStoreTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "lgc-tests-" + Guid.NewGuid());
-    private static readonly AppSettings Settings = new("segredo-pat", "BR", "thinq-open-1", "dev-1", "Quarto");
+    private static readonly AppSettings Settings = new("secret-pat", "BR", "thinq-open-1", "dev-1", "Bedroom");
 
     public void Dispose()
     {
@@ -29,14 +29,14 @@ public sealed class SettingsStoreTests : IDisposable
     {
         new SettingsStore(_dir).Save(Settings);
 
-        Assert.DoesNotContain("segredo-pat", File.ReadAllText(Path.Combine(_dir, "settings.json")));
+        Assert.DoesNotContain("secret-pat", File.ReadAllText(Path.Combine(_dir, "settings.json")));
     }
 
     [Theory]
-    [InlineData("isto não é json")]
+    [InlineData("this is not json")]
     [InlineData("{}")]
     [InlineData("""{"token":"AAAA","countryCode":"BR","clientId":"c","deviceId":"d","deviceAlias":"a"}""")]
-    [InlineData("""{"token":"não é base64!","countryCode":"BR","clientId":"c","deviceId":"d","deviceAlias":"a"}""")]
+    [InlineData("""{"token":"not base64!","countryCode":"BR","clientId":"c","deviceId":"d","deviceAlias":"a"}""")]
     [InlineData("null")]
     public void Load_CorruptOrUndecryptableFile_ReturnsNull(string content)
     {
@@ -56,20 +56,20 @@ public sealed class SettingsStoreTests : IDisposable
     }
 
     [Theory]
-    [InlineData(ThinQErrorKind.Network, "Sem conexão com a internet.")]
-    [InlineData(ThinQErrorKind.Unauthorized, "Token inválido ou expirado.")]
-    [InlineData(ThinQErrorKind.DeviceOffline, "O aparelho está offline.")]
-    [InlineData(ThinQErrorKind.RateLimited, "Muitas requisições. Aguarde um instante.")]
-    [InlineData(ThinQErrorKind.CommandRejected, "O aparelho recusou o comando.")]
-    [InlineData(ThinQErrorKind.Unknown, "Erro da LG: falhou (2000)")]
-    public void ErrorMessages_AreInPortuguese(ThinQErrorKind kind, string expected) =>
-        Assert.Equal(expected, ErrorMessages.For(new ThinQException("2000", "falhou", kind)));
+    [InlineData(ThinQErrorKind.Network, "No internet connection.")]
+    [InlineData(ThinQErrorKind.Unauthorized, "Invalid or expired token.")]
+    [InlineData(ThinQErrorKind.DeviceOffline, "The device is offline.")]
+    [InlineData(ThinQErrorKind.RateLimited, "Too many requests. Please wait a moment.")]
+    [InlineData(ThinQErrorKind.CommandRejected, "The device rejected the command.")]
+    [InlineData(ThinQErrorKind.Unknown, "LG error: failed (2000)")]
+    public void ErrorMessages_AreInEnglish(ThinQErrorKind kind, string expected) =>
+        Assert.Equal(expected, ErrorMessages.For(new ThinQException("2000", "failed", kind)));
 
     [Fact]
     public void ModePalette_OffIsGrey_AndModesDiffer()
     {
         Assert.Equal(((byte)0x6B, (byte)0x72, (byte)0x80), ModePalette.For("COOL", isOn: false));
         Assert.NotEqual(ModePalette.For("COOL", true), ModePalette.For("HEAT", true));
-        Assert.Equal(ModePalette.For("COOL", true), ModePalette.For("DESCONHECIDO", true));
+        Assert.Equal(ModePalette.For("COOL", true), ModePalette.For("UNKNOWN", true));
     }
 }

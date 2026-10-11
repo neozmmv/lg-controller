@@ -1,27 +1,27 @@
 # LG Controller
 
-Controle um ar-condicionado LG ThinQ pela bandeja do Windows.
+Control an LG ThinQ air conditioner from the Windows system tray.
 
-## Requisitos
+## Requirements
 
-- Windows 10 ou 11 (o fundo translúcido precisa do Windows 11 22H2 ou mais novo)
+- Windows 10 or 11 (the translucent background needs Windows 11 22H2 or newer)
 - .NET 10 Desktop Runtime
-- Um ar-condicionado LG já cadastrado no aplicativo ThinQ
+- An LG air conditioner already registered in the ThinQ app
 
-## Primeiro uso
+## First run
 
-1. Gere um token pessoal em https://connect-pat.lgthinq.com com a sua conta LG.
-2. Abra `LgController.exe`, cole o token, informe o país e clique em Conectar.
-3. Escolha o aparelho e salve.
+1. Create a personal access token at https://connect-pat.lgthinq.com with your LG account.
+2. Open `LgController.exe`, paste the token, enter your country and click Connect.
+3. Pick the device and save.
 
-O token fica em `%APPDATA%\LgController\settings.json`, criptografado para o seu usuário do Windows.
+The token is stored in `%APPDATA%\LgController\settings.json`, encrypted for your Windows user.
 
-## Uso
+## Usage
 
-- Clique no ícone da bandeja para abrir o painel.
-- Clique com o botão direito para ligar ou desligar, iniciar com o Windows, reconfigurar ou sair.
+- Click the tray icon to open the panel.
+- Right-click it to turn the unit on or off, start with Windows, reconfigure or exit.
 
-## Desenvolvimento
+## Development
 
 ```powershell
 dotnet test
@@ -29,7 +29,7 @@ dotnet run --project src/LgController
 dotnet publish src/LgController -c Release -o publish
 ```
 
-`tools/Probe` é um console para testar a API direto no aparelho. Defina `LG_THINQ_PAT` e rode
+`tools/Probe` is a console app for testing the API directly against the device. Set `LG_THINQ_PAT` and run
 `dotnet run --project tools/Probe -- list`.
 
-Erros não tratados vão para `%APPDATA%\LgController\log.txt`.
+Unhandled errors go to `%APPDATA%\LgController\log.txt`.

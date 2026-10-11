@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace LgController.UI;
 
-/// <summary>Efeitos de janela do Windows 11 via DWM.</summary>
+/// <summary>Windows 11 window effects through DWM.</summary>
 public static class Backdrop
 {
     private const int DwmwaUseImmersiveDarkMode = 20;
@@ -16,10 +16,10 @@ public static class Backdrop
     private const int GwlExStyle = -20;
     private const int WsExToolWindow = 0x80;
 
-    /// <summary>Os fundos de sistema existem a partir do Windows 11 22H2.</summary>
+    /// <summary>System backdrops exist from Windows 11 22H2 onward.</summary>
     public static bool IsSupported => Environment.OSVersion.Version.Build >= 22621;
 
-    /// <summary>Aplica acrílico, cantos arredondados e modo escuro. Falso quando o sistema não suporta.</summary>
+    /// <summary>Applies acrylic, rounded corners and dark mode. False when the system does not support it.</summary>
     public static bool Apply(Window window, bool dark)
     {
         if (!IsSupported) return false;

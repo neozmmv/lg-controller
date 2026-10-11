@@ -5,7 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- O índice 0 é o tema; ThemeManager o substitui. -->
+                <!-- Index 0 is the theme; ThemeManager replaces it. -->
                 <ResourceDictionary Source="/UI/Themes/Dark.xaml" />
                 <ResourceDictionary Source="/UI/Themes/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>

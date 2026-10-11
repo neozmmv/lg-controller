@@ -18,7 +18,7 @@ public partial class FlyoutWindow : Window
         _viewModel = viewModel;
         DataContext = viewModel;
 
-        // Um único pincel compartilhado: animar a cor dele muda todos os controles de destaque.
+        // A single shared brush: animating its color changes every accent control.
         _accent = new SolidColorBrush(viewModel.AccentColor);
         Resources["AccentBrush"] = _accent;
         viewModel.PropertyChanged += OnViewModelChanged;

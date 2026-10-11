@@ -5,8 +5,8 @@ namespace LgController.UI;
 public static class FlyoutPlacement
 {
     /// <summary>
-    /// Canto da área de trabalho mais próximo da bandeja. A área de trabalho começa depois da barra
-    /// de tarefas quando ela está em cima ou à esquerda, e é por aí que se sabe onde ela está.
+    /// Work-area corner closest to the tray. The work area starts after the taskbar
+    /// when it sits at the top or left, and that is how its position is known.
     /// </summary>
     public static Point Compute(Rect workArea, Size window, double margin = 12)
     {

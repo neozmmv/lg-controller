@@ -32,7 +32,7 @@ public partial class App : Application
             Log.Write(args.Exception);
             args.Handled = true;
         };
-        AppDomain.CurrentDomain.UnhandledException += (_, args) => Log.Write(args.ExceptionObject.ToString() ?? "erro");
+        AppDomain.CurrentDomain.UnhandledException += (_, args) => Log.Write(args.ExceptionObject.ToString() ?? "error");
         TaskScheduler.UnobservedTaskException += (_, args) =>
         {
             Log.Write(args.Exception);
@@ -58,7 +58,7 @@ public partial class App : Application
         base.OnExit(e);
     }
 
-    /// <summary>Abre a configuração; devolve nulo se a pessoa fechar sem salvar.</summary>
+    /// <summary>Opens setup; returns null if the person closes it without saving.</summary>
     private AppSettings? RunSetup(AppSettings? existing)
     {
         var viewModel = new SetupViewModel(

@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace LgController.ThinQ;
 
-/// <summary>Leitura que nunca lança: um caminho ausente devolve um elemento indefinido.</summary>
+/// <summary>Reads that never throw: a missing path returns an undefined element.</summary>
 public static class JsonExtensions
 {
     public static JsonElement Prop(this JsonElement element, string name) =>

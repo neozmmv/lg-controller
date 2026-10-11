@@ -4,7 +4,7 @@ public enum TemperatureResource { None, Legacy, InUnits }
 
 public enum AcField { Power, Mode, Temperature, WindStrength, SwingVertical, SwingHorizontal, PowerSave, StopTimer }
 
-/// <summary>O que o aparelho aceita como comando, segundo o perfil.</summary>
+/// <summary>What the device accepts as commands, according to its profile.</summary>
 public sealed record AcCapabilities
 {
     public bool CanPower { get; init; }
@@ -33,6 +33,6 @@ public sealed record AcState
     public bool SwingVertical { get; init; }
     public bool SwingHorizontal { get; init; }
     public bool PowerSave { get; init; }
-    /// <summary>Minutos até desligar; nulo quando não há timer.</summary>
+    /// <summary>Minutes until power-off; null when no timer is set.</summary>
     public int? StopTimerMinutes { get; init; }
 }
