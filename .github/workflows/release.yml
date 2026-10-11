@@ -11,6 +11,8 @@ permissions:
 jobs:
   release:
     runs-on: windows-latest
+    env:
+      TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
 
@@ -21,10 +23,26 @@ jobs:
       - name: Test
         run: dotnet test -c Release
 
-      - name: Publish
-        run: dotnet publish src/LgController -c Release -o publish -p:Version=$("${{ github.ref_name }}".TrimStart('v'))
+      # Small download; needs the .NET 10 Desktop Runtime installed.
+      - name: Publish (requires runtime)
+        run: |
+          dotnet publish src/LgController -c Release -o out/runtime -p:Version=$($env:TAG.TrimStart('v'))
+          Move-Item out/runtime/LgController.exe "LG-Controller-${env:TAG}.exe"
+
+      # Large download; runs with nothing else installed.
+      - name: Publish (self-contained)
+        run: |
+          dotnet publish src/LgController -c Release -o out/self-contained --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:Version=$($env:TAG.TrimStart('v'))
+          Move-Item out/self-contained/LgController.exe "LG-Controller-${env:TAG}-self-contained.exe"
 
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" publish/LgController.exe --title "LG-Controller ${{ github.ref_name }}" --generate-notes --verify-tag
+        run: |
+          $notes = @"
+          ## Which file do I download?
+
+          - **LG-Controller-${env:TAG}-self-contained.exe**: runs on any 64-bit Windows 10/11, nothing else to install. Pick this one if unsure.
+          - **LG-Controller-${env:TAG}.exe**: much smaller, but needs the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) installed.
+          "@
+          gh release create ${env:TAG} "LG-Controller-${env:TAG}.exe" "LG-Controller-${env:TAG}-self-contained.exe" --title "LG-Controller ${env:TAG}" --notes $notes --generate-notes --verify-tag
