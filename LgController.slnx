@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LgController/LgController.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LgController.Tests/LgController.Tests.csproj" />
+  </Folder>
+</Solution>
