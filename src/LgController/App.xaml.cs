@@ -14,6 +14,7 @@ public partial class App : Application
     private HttpClient? _http;
     private AcController? _controller;
     private TrayIcon? _tray;
+    private FlyoutWindow? _flyout;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -73,11 +74,18 @@ public partial class App : Application
         _settings = settings;
         _http = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
         var client = new ThinQClient(_http, new ThinQCredentials(settings.Token, settings.CountryCode, settings.ClientId));
-        var controller = new AcController(client, settings.DeviceId, TimeProvider.System, action => Dispatcher.BeginInvoke(action));
+        void Dispatch(Action action) => Dispatcher.BeginInvoke(action);
+        var controller = new AcController(client, settings.DeviceId, TimeProvider.System, Dispatch);
         _controller = controller;
 
+        var viewModel = new FlyoutViewModel(controller, settings.DeviceAlias, TimeProvider.System, Dispatch);
+        viewModel.SettingsRequested += OpenSettings;
+        var flyout = new FlyoutWindow(viewModel);
+        flyout.OpenChanged += controller.SetPanelOpen;
+        _flyout = flyout;
+
         _tray = new TrayIcon(
-            toggleFlyout: () => { },
+            toggleFlyout: flyout.Toggle,
             togglePower: () => controller.SetPower(!(controller.State?.IsOn ?? false)),
             openSettings: OpenSettings,
             exit: Shutdown);
@@ -93,6 +101,8 @@ public partial class App : Application
     {
         _tray?.Dispose();
         _tray = null;
+        _flyout?.Close();
+        _flyout = null;
         _controller?.Dispose();
         _controller = null;
         _http?.Dispose();
