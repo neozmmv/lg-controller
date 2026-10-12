@@ -3,36 +3,167 @@
 
     <BooleanToVisibilityConverter x:Key="BoolVis" />
     <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+    <CubicEase x:Key="EaseOut" EasingMode="EaseOut" />
+
+    <!-- Shared press and hover feedback; the target is a template part named Bd with a ScaleTransform. -->
+    <Storyboard x:Key="PressDown">
+        <DoubleAnimation Storyboard.TargetName="Bd" To="0.94" Duration="0:0:0.09"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" />
+        <DoubleAnimation Storyboard.TargetName="Bd" To="0.94" Duration="0:0:0.09"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" />
+    </Storyboard>
+    <Storyboard x:Key="PressUp">
+        <DoubleAnimation Storyboard.TargetName="Bd" To="1" Duration="0:0:0.22" EasingFunction="{StaticResource EaseOut}"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" />
+        <DoubleAnimation Storyboard.TargetName="Bd" To="1" Duration="0:0:0.22" EasingFunction="{StaticResource EaseOut}"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" />
+    </Storyboard>
+    <Storyboard x:Key="HoverIn">
+        <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+    </Storyboard>
+    <Storyboard x:Key="HoverOut">
+        <DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.25" />
+    </Storyboard>
+    <Storyboard x:Key="CheckOn">
+        <DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2" />
+    </Storyboard>
+    <Storyboard x:Key="CheckOff">
+        <DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2" />
+    </Storyboard>
 
     <!-- Panel block that fades when disabled. -->
     <Style x:Key="Section" TargetType="FrameworkElement">
         <Style.Triggers>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Opacity" Value="0.4" />
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.35" Duration="0:0:0.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- Grid tile; the DataContext is a TileItem. -->
+    <Style x:Key="TileButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Margin" Value="4" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" CornerRadius="16" Background="{DynamicResource CardBrush}"
+                            BorderBrush="{DynamicResource CardStrokeBrush}" BorderThickness="1"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <ScaleTransform />
+                        </Border.RenderTransform>
+                        <Grid>
+                            <Border x:Name="Hover" CornerRadius="15" Background="{DynamicResource CardHoverBrush}"
+                                    Opacity="0" />
+                            <ContentPresenter Margin="12,11,11,10" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverIn}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOut}" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressDown}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressUp}" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Bd" Storyboard.TargetProperty="Opacity"
+                                                         To="0.35" Duration="0:0:0.25" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Bd" Storyboard.TargetProperty="Opacity"
+                                                         To="1" Duration="0:0:0.25" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Selector option; the DataContext is an OptionItem. -->
     <Style x:Key="ChipButton" TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-        <Setter Property="Background" Value="{DynamicResource CardBrush}" />
         <Setter Property="Margin" Value="3" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bd" CornerRadius="12" Background="{TemplateBinding Background}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border x:Name="Bd" CornerRadius="12" Background="{DynamicResource CardBrush}"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <ScaleTransform />
+                        </Border.RenderTransform>
+                        <Grid>
+                            <Border x:Name="Hover" CornerRadius="12" Background="{DynamicResource CardHoverBrush}"
+                                    Opacity="0" />
+                            <Border x:Name="On" CornerRadius="12" Background="{DynamicResource AccentBrush}"
+                                    Opacity="0" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverIn}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOut}" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressDown}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressUp}" />
+                            </Trigger.ExitActions>
                         </Trigger>
                         <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Foreground" Value="White" />
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource CheckOn}" />
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource CheckOff}" />
+                            </DataTrigger.ExitActions>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -42,23 +173,62 @@
 
     <Style x:Key="RoundButton" TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-        <Setter Property="Width" Value="44" />
-        <Setter Property="Height" Value="44" />
-        <Setter Property="FontSize" Value="22" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="FontSize" Value="20" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bd" CornerRadius="22" Background="{DynamicResource CardBrush}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border x:Name="Bd" CornerRadius="18" Background="{DynamicResource CardBrush}"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <ScaleTransform />
+                        </Border.RenderTransform>
+                        <Grid>
+                            <Border x:Name="Hover" CornerRadius="18" Background="{DynamicResource CardHoverBrush}"
+                                    Opacity="0" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverIn}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOut}" />
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressDown}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressUp}" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Text-only button, such as the tray's back link. -->
+    <Style x:Key="LinkButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="Transparent" Padding="2,2,8,2">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -68,24 +238,52 @@
 
     <Style x:Key="PowerButton" TargetType="ToggleButton">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-        <Setter Property="Width" Value="48" />
-        <Setter Property="Height" Value="48" />
+        <Setter Property="Width" Value="46" />
+        <Setter Property="Height" Value="46" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="Bd" CornerRadius="24" Background="{DynamicResource CardBrush}">
-                        <TextBlock Text="&#xE7E8;" FontFamily="{StaticResource IconFont}" FontSize="20"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border x:Name="Bd" CornerRadius="23" Background="{DynamicResource CardBrush}"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <ScaleTransform />
+                        </Border.RenderTransform>
+                        <Grid>
+                            <Border x:Name="Hover" CornerRadius="23" Background="{DynamicResource CardHoverBrush}"
+                                    Opacity="0" />
+                            <Border x:Name="On" CornerRadius="23" Background="{DynamicResource AccentBrush}"
+                                    Opacity="0" />
+                            <TextBlock Text="&#xE7E8;" FontFamily="{StaticResource IconFont}" FontSize="19"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverIn}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOut}" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressDown}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource PressUp}" />
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Foreground" Value="White" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource CheckOn}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource CheckOff}" />
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.4" />
@@ -98,8 +296,7 @@
 
     <Style x:Key="Switch" TargetType="CheckBox">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Margin" Value="0,7" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
@@ -111,17 +308,41 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <ContentPresenter VerticalAlignment="Center" />
-                        <Border x:Name="Track" Grid.Column="1" Width="40" Height="22" CornerRadius="11"
-                                Background="{DynamicResource TrackBrush}">
+                        <Grid Grid.Column="1" Width="40" Height="22" Margin="10,0,0,0">
+                            <Border CornerRadius="11" Background="{DynamicResource TrackBrush}" />
+                            <Border x:Name="On" CornerRadius="11" Background="{DynamicResource AccentBrush}" Opacity="0" />
                             <Ellipse x:Name="Thumb" Width="16" Height="16" Margin="3,0" HorizontalAlignment="Left"
-                                     Fill="{DynamicResource SubtleTextBrush}" />
-                        </Border>
+                                     Fill="White">
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform />
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Track" Property="Background" Value="{DynamicResource AccentBrush}" />
-                            <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right" />
-                            <Setter TargetName="Thumb" Property="Fill" Value="White" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity"
+                                                         To="1" Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="Thumb" To="18" Duration="0:0:0.22"
+                                                         EasingFunction="{StaticResource EaseOut}"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity"
+                                                         To="0" Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="Thumb" To="0" Duration="0:0:0.22"
+                                                         EasingFunction="{StaticResource EaseOut}"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -54,7 +54,21 @@ public static class Samples
               "relativeHourToStop": { "type": "number", "mode": ["r", "w"] },
               "relativeMinuteToStop": { "type": "number", "mode": ["r", "w"] },
               "relativeStopTimer": { "type": "enum", "mode": ["r", "w"],
+                "value": { "r": ["SET", "UNSET"], "w": ["UNSET"] } },
+              "relativeHourToStart": { "type": "number", "mode": ["r", "w"] },
+              "relativeMinuteToStart": { "type": "number", "mode": ["r", "w"] },
+              "relativeStartTimer": { "type": "enum", "mode": ["r", "w"],
                 "value": { "r": ["SET", "UNSET"], "w": ["UNSET"] } }
+            },
+            "sleepTimer": {
+              "relativeHourToStop": { "type": "number", "mode": ["r", "w"] },
+              "relativeMinuteToStop": { "type": "number", "mode": ["r", "w"] },
+              "relativeStopTimer": { "type": "enum", "mode": ["r", "w"],
+                "value": { "r": ["SET", "UNSET"], "w": ["UNSET"] } }
+            },
+            "filterInfo": {
+              "filterLifetime": { "type": "number", "mode": ["r"] },
+              "usedTime": { "type": "number", "mode": ["r"] }
             }
           }
         }
@@ -72,7 +86,10 @@ public static class Samples
           "airFlow": { "windStrength": "MID" },
           "windDirection": { "rotateUpDown": true, "rotateLeftRight": false },
           "powerSave": { "powerSaveEnabled": false },
-          "timer": { "relativeHourToStop": 1, "relativeMinuteToStop": 30, "relativeStopTimer": "SET" }
+          "timer": { "relativeHourToStop": 1, "relativeMinuteToStop": 30, "relativeStopTimer": "SET",
+            "relativeStartTimer": "UNSET" },
+          "sleepTimer": { "relativeHourToStop": 2, "relativeMinuteToStop": 0, "relativeStopTimer": "SET" },
+          "filterInfo": { "filterLifetime": 0, "usedTime": 720 }
         }
         """;
 }

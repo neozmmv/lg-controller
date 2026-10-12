@@ -44,6 +44,24 @@ public class AcControllerTests
     }
 
     [Fact]
+    public async Task StartAndSleepTimers_UpdateStateAndSendTheirOwnCommands()
+    {
+        await _controller.RefreshAsync();
+
+        _controller.SetStartTimer(60);
+        _controller.SetSleepTimer(0);
+
+        Assert.Equal(60, _controller.State!.StartTimerMinutes);
+        Assert.Null(_controller.State.SleepTimerMinutes);
+
+        _time.Advance(AcController.DebounceDelay);
+
+        Assert.Equal(
+            ["""{"timer":{"relativeHourToStart":1}}""", """{"sleepTimer":{"relativeStopTimer":"UNSET"}}"""],
+            _client.Controls);
+    }
+
+    [Fact]
     public void Commands_BeforeFirstRefresh_AreIgnored()
     {
         _controller.SetTargetTemperature(25);

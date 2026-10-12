@@ -10,6 +10,7 @@ public sealed partial class OptionItem(string value, string label, string glyph 
     public string Label { get; } = label;
     public string Glyph { get; } = glyph;
     public string GlyphFont { get; } = glyphFont;
+    public bool HasGlyph => Glyph.Length > 0;
 
     [ObservableProperty] private bool _isSelected;
 }

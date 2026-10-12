@@ -12,12 +12,35 @@ public class AcProfileParserTests
         Assert.True(caps.CanPower);
         Assert.Equal(["COOL", "AIR_DRY", "FAN", "AUTO"], caps.Modes);
         Assert.Equal(["LOW", "MID", "HIGH", "AUTO"], caps.WindStrengths);
-        Assert.Equal("windStrength", caps.WindStrengthKey);
+        Assert.Empty(caps.WindStrengthDetails);
         Assert.True(caps.CanSwingVertical);
         Assert.False(caps.CanSwingHorizontal);
         Assert.True(caps.CanPowerSave);
         Assert.True(caps.CanStopTimer);
         Assert.True(caps.CanCancelStopTimer);
+    }
+
+    [Fact]
+    public void Parse_SampleProfile_ReadsStartAndSleepTimers()
+    {
+        var caps = AcProfileParser.Parse(Samples.Parse(Samples.Profile));
+
+        Assert.True(caps.CanStartTimer);
+        Assert.True(caps.CanCancelStartTimer);
+        Assert.True(caps.CanSleepTimer);
+        Assert.True(caps.CanCancelSleepTimer);
+    }
+
+    [Fact]
+    public void Parse_WithoutStartAndSleepTimers_DoesNotOfferThem()
+    {
+        var caps = AcProfileParser.Parse(Samples.Parse("""
+            {"property":{"timer":{"relativeHourToStop":{"type":"number","mode":["r","w"]}}}}
+            """));
+
+        Assert.True(caps.CanStopTimer);
+        Assert.False(caps.CanStartTimer);
+        Assert.False(caps.CanSleepTimer);
     }
 
     [Fact]
@@ -47,16 +70,29 @@ public class AcProfileParserTests
     }
 
     [Fact]
-    public void Parse_PrefersWindStrengthDetailWhenPresent()
+    public void Parse_WindStrengthDetail_AddsOnlyTheSpeedsWindStrengthLacks()
     {
         var caps = AcProfileParser.Parse(Samples.Parse("""
             {"property":{"airFlow":{
-              "windStrength":{"type":"enum","mode":["r","w"],"value":{"w":["LOW","HIGH"]}},
+              "windStrength":{"type":"enum","mode":["r","w"],"value":{"w":["LOW","HIGH","AUTO"]}},
+              "windStrengthDetail":{"type":"enum","mode":["r","w"],"value":{"w":["NATURE","LOW","HIGH"]}}}}}
+            """));
+
+        Assert.Equal(["LOW", "HIGH", "AUTO"], caps.WindStrengths);
+        Assert.Equal(["NATURE"], caps.WindStrengthDetails);
+        Assert.Equal(["LOW", "HIGH", "AUTO", "NATURE"], caps.AllWindStrengths);
+    }
+
+    [Fact]
+    public void Parse_OnlyWindStrengthDetail_OffersItsSpeeds()
+    {
+        var caps = AcProfileParser.Parse(Samples.Parse("""
+            {"property":{"airFlow":{
               "windStrengthDetail":{"type":"enum","mode":["r","w"],"value":{"w":["NATURE","POWER"]}}}}}
             """));
 
-        Assert.Equal("windStrengthDetail", caps.WindStrengthKey);
-        Assert.Equal(["NATURE", "POWER"], caps.WindStrengths);
+        Assert.Empty(caps.WindStrengths);
+        Assert.Equal(["NATURE", "POWER"], caps.AllWindStrengths);
     }
 
     [Fact]

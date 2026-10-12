@@ -11,6 +11,10 @@ public static class AcStateParser
             ? state.Prop("temperatureInUnits").Items().FirstOrDefault(u => u.Prop("unit").AsString() == caps.TemperatureUnit)
             : state.Prop("temperature");
         var windDirection = state.Prop("windDirection");
+        var airFlow = state.Prop("airFlow");
+        var windDetail = airFlow.Prop("windStrengthDetail").AsString();
+        var timer = state.Prop("timer");
+        var filter = state.Prop("filterInfo");
 
         return new AcState
         {
@@ -18,19 +22,26 @@ public static class AcStateParser
             Mode = state.Prop("airConJobMode").Prop("currentJobMode").AsString(),
             CurrentTemperature = temperature.Prop("currentTemperature").AsDouble(),
             TargetTemperature = temperature.Prop("targetTemperature").AsDouble(),
-            WindStrength = state.Prop("airFlow").Prop(caps.WindStrengthKey).AsString(),
+            WindStrength = windDetail is not null && caps.WindStrengthDetails.Contains(windDetail)
+                ? windDetail
+                : airFlow.Prop("windStrength").AsString() ?? windDetail,
             SwingVertical = windDirection.Prop("rotateUpDown").AsBool() ?? false,
             SwingHorizontal = windDirection.Prop("rotateLeftRight").AsBool() ?? false,
             PowerSave = state.Prop("powerSave").Prop("powerSaveEnabled").AsBool() ?? false,
-            StopTimerMinutes = StopTimerMinutes(state.Prop("timer")),
+            StopTimerMinutes = TimerMinutes(timer, "Stop"),
+            StartTimerMinutes = TimerMinutes(timer, "Start"),
+            SleepTimerMinutes = TimerMinutes(state.Prop("sleepTimer"), "Stop"),
+            FilterUsedHours = filter.Prop("usedTime").AsDouble(),
+            FilterLifetimeHours = filter.Prop("filterLifetime").AsDouble(),
         };
     }
 
-    private static int? StopTimerMinutes(JsonElement timer)
+    /// <summary><paramref name="action"/> is the property name suffix: "Stop" or "Start".</summary>
+    private static int? TimerMinutes(JsonElement timer, string action)
     {
-        if (timer.Prop("relativeStopTimer").AsString() == "UNSET") return null;
-        var minutes = (int)((timer.Prop("relativeHourToStop").AsDouble() ?? 0) * 60
-                            + (timer.Prop("relativeMinuteToStop").AsDouble() ?? 0));
+        if (timer.Prop($"relative{action}Timer").AsString() == "UNSET") return null;
+        var minutes = (int)((timer.Prop($"relativeHourTo{action}").AsDouble() ?? 0) * 60
+                            + (timer.Prop($"relativeMinuteTo{action}").AsDouble() ?? 0));
         return minutes > 0 ? minutes : null;
     }
 }

@@ -13,40 +13,84 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
-        <DataTemplate x:Key="IconOption">
-            <Button Style="{StaticResource ChipButton}" Height="62"
-                    Command="{Binding DataContext.SelectModeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+        <DataTemplate x:Key="Tile">
+            <Button Style="{StaticResource TileButton}" Height="80" IsEnabled="{Binding IsEnabled}"
+                    Command="{Binding DataContext.ActivateTileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    CommandParameter="{Binding}">
+                <Grid>
+                    <TextBlock Text="{Binding Glyph}" FontFamily="{Binding GlyphFont}" FontSize="20"
+                               HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <Path Data="{Binding Icon}" Width="24" Height="24" Margin="-2,-1,0,0"
+                          HorizontalAlignment="Left" VerticalAlignment="Top"
+                          Visibility="{Binding HasIcon, Converter={StaticResource BoolVis}}">
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <Setter Property="Fill" Value="{DynamicResource TextBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                        <Setter Property="Fill" Value="{DynamicResource AccentBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                    <TextBlock Text="&#xE70D;" FontFamily="{StaticResource IconFont}" FontSize="9" Margin="0,4,0,0"
+                               Foreground="{DynamicResource SubtleTextBrush}"
+                               HorizontalAlignment="Right" VerticalAlignment="Top"
+                               Visibility="{Binding HasOptions, Converter={StaticResource BoolVis}}" />
+                    <Ellipse Width="7" Height="7" Margin="0,4,1,0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                             Visibility="{Binding IsToggle, Converter={StaticResource BoolVis}}">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="{DynamicResource TrackBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                        <Setter Property="Fill" Value="{DynamicResource AccentBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <StackPanel VerticalAlignment="Bottom">
+                        <TextBlock Text="{Binding Title}" FontSize="11" Foreground="{DynamicResource SubtleTextBrush}"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding Value}" FontSize="13" FontWeight="SemiBold" Margin="0,1,0,0"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Grid>
+            </Button>
+        </DataTemplate>
+        <DataTemplate x:Key="Option">
+            <Button Style="{StaticResource ChipButton}" Height="72"
+                    Command="{Binding DataContext.SelectOptionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                     CommandParameter="{Binding}">
                 <StackPanel>
-                    <TextBlock Text="{Binding Glyph}" FontFamily="{Binding GlyphFont}" FontSize="18"
-                               HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding Label}" FontSize="11" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Glyph}" FontFamily="{Binding GlyphFont}" FontSize="17"
+                               HorizontalAlignment="Center" Margin="0,0,0,5"
+                               Visibility="{Binding HasGlyph, Converter={StaticResource BoolVis}}" />
+                    <TextBlock Text="{Binding Label}" FontSize="12" HorizontalAlignment="Center" />
                 </StackPanel>
             </Button>
         </DataTemplate>
-        <DataTemplate x:Key="WindOption">
-            <Button Style="{StaticResource ChipButton}" Height="36" Content="{Binding Label}" FontSize="12"
-                    Command="{Binding DataContext.SelectWindCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                    CommandParameter="{Binding}" />
-        </DataTemplate>
-        <DataTemplate x:Key="TimerOption">
-            <Button Style="{StaticResource ChipButton}" Height="36" Content="{Binding Label}" FontSize="12"
-                    Command="{Binding DataContext.SelectTimerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                    CommandParameter="{Binding}" />
-        </DataTemplate>
-        <ItemsPanelTemplate x:Key="OneRow">
-            <UniformGrid Rows="1" />
-        </ItemsPanelTemplate>
-        <Style x:Key="Caption" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Margin" Value="3,16,0,5" />
-        </Style>
     </Window.Resources>
 
-    <Border x:Name="Root" Padding="20,18,20,20" Background="{DynamicResource PanelSolidBrush}">
+    <Border x:Name="Root" Padding="20,18,20,18" Background="{DynamicResource PanelSolidBrush}"
+            RenderTransformOrigin="0.5,1">
         <Border.RenderTransform>
-            <TranslateTransform x:Name="RootShift" />
+            <TransformGroup>
+                <ScaleTransform x:Name="RootScale" />
+                <TranslateTransform x:Name="RootShift" />
+            </TransformGroup>
         </Border.RenderTransform>
         <StackPanel>
             <!-- Header -->
@@ -56,13 +100,67 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="{Binding DeviceName}" FontSize="18" FontWeight="SemiBold"
+                    <TextBlock Text="{Binding DeviceName}" FontSize="15" FontWeight="SemiBold"
                                TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{Binding RoomTemperatureText}" Foreground="{DynamicResource SubtleTextBrush}"
-                               FontSize="12" Margin="0,2,0,0" />
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RoomTemperatureText}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Grid Width="14" Height="16" VerticalAlignment="Center">
+                            <Path Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.3"
+                                  Data="M7,1.5 a2,2 0 0 1 2,2 v5.6 a3.2,3.2 0 1 1 -4,0 v-5.6 a2,2 0 0 1 2,-2 z" />
+                            <Ellipse Width="3" Height="3" Fill="{DynamicResource AccentBrush}"
+                                     HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5.5,10.2,0,0" />
+                        </Grid>
+                        <TextBlock Text="Room" FontSize="12" Foreground="{DynamicResource SubtleTextBrush}"
+                                   Margin="6,0,0,0" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding RoomTemperatureText}" FontSize="12" FontWeight="SemiBold"
+                                   Margin="5,0,0,0" VerticalAlignment="Center" />
+                        <Ellipse Width="6" Height="6" Fill="{DynamicResource AccentBrush}" Margin="9,1,0,0"
+                                 VerticalAlignment="Center" />
+                    </StackPanel>
                 </StackPanel>
-                <ToggleButton Grid.Column="1" Style="{StaticResource PowerButton}" IsChecked="{Binding IsOn}"
-                              IsEnabled="{Binding PowerEnabled}" ToolTip="Turn on or off" />
+                <Grid Grid.Column="1">
+                    <!-- Glow behind the power button while the unit is on. -->
+                    <Ellipse Width="46" Height="46" Fill="{DynamicResource AccentBrush}" Opacity="0"
+                             IsHitTestVisible="False">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="16" />
+                        </Ellipse.Effect>
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsOn}" Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.75"
+                                                                     Duration="0:0:0.4" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0"
+                                                                     Duration="0:0:0.4" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <ToggleButton Style="{StaticResource PowerButton}" IsChecked="{Binding IsOn}"
+                                  IsEnabled="{Binding PowerEnabled}" ToolTip="Turn on or off" />
+                </Grid>
             </Grid>
 
             <!-- Connection error -->
@@ -76,67 +174,146 @@
                 </DockPanel>
             </Border>
 
-            <!-- Temperature -->
-            <Grid Height="214" Margin="0,14,0,0" Style="{StaticResource Section}"
-                  IsEnabled="{Binding TemperatureEnabled}"
-                  Visibility="{Binding ShowTemperature, Converter={StaticResource BoolVis}}">
-                <ui:ArcGauge Width="204" Height="204" Thickness="11" VerticalAlignment="Top"
-                             Minimum="{Binding MinTemperature}" Maximum="{Binding MaxTemperature}"
-                             Value="{Binding TargetTemperature}"
-                             AccentBrush="{DynamicResource AccentBrush}" TrackBrush="{DynamicResource TrackBrush}" />
-                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,54,0,0">
-                    <TextBlock Text="{Binding TargetTemperatureText}" FontSize="58" FontWeight="Light"
-                               FontFamily="Segoe UI Variable Display, Segoe UI" HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding ModeText}" Foreground="{DynamicResource SubtleTextBrush}" FontSize="13"
-                               HorizontalAlignment="Center" Margin="0,-4,0,0" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                    <Button Style="{StaticResource RoundButton}" Content="−" ToolTip="Decrease"
-                            Command="{Binding DecreaseTemperatureCommand}" />
-                    <Button Style="{StaticResource RoundButton}" Content="+" ToolTip="Increase" Margin="44,0,0,0"
-                            Command="{Binding IncreaseTemperatureCommand}" />
-                </StackPanel>
+            <!-- The unit and its airflow -->
+            <Grid x:Name="Hero" Height="150" Margin="0,8,0,0" Style="{StaticResource Section}"
+                  IsEnabled="{Binding AirflowActive}">
+                <Ellipse Width="230" Height="96" VerticalAlignment="Top" Margin="0,18,0,0" Opacity="0.3"
+                         Fill="{DynamicResource AccentBrush}" IsHitTestVisible="False">
+                    <Ellipse.Effect>
+                        <BlurEffect Radius="48" />
+                    </Ellipse.Effect>
+                </Ellipse>
+                <ui:AirflowVisual Margin="0,62,0,0" Stroke="{DynamicResource AccentBrush}"
+                                  IsActive="{Binding AirflowActive}" Speed="{Binding AirflowSpeed}"
+                                  Swing="{Binding AirflowSwing}" />
+                <Border Width="172" Height="52" CornerRadius="13" VerticalAlignment="Top" Margin="0,12,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#FFFFFFFF" Offset="0" />
+                            <GradientStop Color="#FFDDE1EA" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="20" ShadowDepth="6" Direction="270" Opacity="0.35" />
+                    </Border.Effect>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    Margin="0,9,14,0">
+                            <TextBlock Text="{Binding TargetTemperatureText}" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="#FFF0703A" />
+                            <Ellipse Width="4" Height="4" Fill="#FFF0703A" Margin="5,1,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Border Height="1" Background="#16000000" VerticalAlignment="Bottom" Margin="0,0,0,17" />
+                        <Border Height="4" CornerRadius="2" Background="#2E1A2030" VerticalAlignment="Bottom"
+                                Margin="16,0,16,7" />
+                    </Grid>
+                </Border>
             </Grid>
 
-            <!-- Mode, fan speed and extras -->
-            <StackPanel Style="{StaticResource Section}" IsEnabled="{Binding ControlsEnabled}">
-                <StackPanel Visibility="{Binding ShowModes, Converter={StaticResource BoolVis}}">
-                    <TextBlock Text="Mode" Style="{StaticResource Caption}" />
-                    <ItemsControl ItemsSource="{Binding Modes}" ItemTemplate="{StaticResource IconOption}"
-                                  ItemsPanel="{StaticResource OneRow}" Margin="-3,0" />
+            <!-- Target temperature and eco mode -->
+            <Grid x:Name="TempRow">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource Section}"
+                            IsEnabled="{Binding TemperatureEnabled}"
+                            Visibility="{Binding ShowTemperature, Converter={StaticResource BoolVis}}">
+                    <TextBlock x:Name="TempNumber" Text="{Binding TargetTemperatureText}" FontSize="54"
+                               FontWeight="Light" FontFamily="Segoe UI Variable Display, Segoe UI">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform x:Name="TempShift" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    <TextBlock Text="{Binding TemperatureUnitText}" FontSize="15" FontWeight="SemiBold"
+                               Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Bottom" Margin="4,0,0,13" />
                 </StackPanel>
+                <Border HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="14" Padding="13,10,11,10"
+                        Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource CardStrokeBrush}"
+                        BorderThickness="1" Style="{StaticResource Section}" IsEnabled="{Binding ControlsEnabled}"
+                        Visibility="{Binding ShowPowerSave, Converter={StaticResource BoolVis}}">
+                    <CheckBox Style="{StaticResource Switch}" IsChecked="{Binding PowerSave}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Width="16" Height="16" Stroke="{DynamicResource SubtleTextBrush}" StrokeThickness="1.3"
+                                  StrokeLineJoin="Round" StrokeEndLineCap="Round" VerticalAlignment="Center"
+                                  Data="M3,13 C3,6.5 7,3 13,3 C13,9 9.5,13 3,13 Z M3,13 L8.5,7.5" />
+                            <TextBlock Text="Eco Mode" FontWeight="SemiBold" Margin="7,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </CheckBox>
+                </Border>
+            </Grid>
 
-                <StackPanel Visibility="{Binding ShowWind, Converter={StaticResource BoolVis}}">
-                    <TextBlock Text="Fan speed" Style="{StaticResource Caption}" />
-                    <ItemsControl ItemsSource="{Binding WindStrengths}" ItemTemplate="{StaticResource WindOption}"
-                                  ItemsPanel="{StaticResource OneRow}" Margin="-3,0" />
-                </StackPanel>
+            <Grid x:Name="SliderRow" Margin="0,6,0,0" Style="{StaticResource Section}"
+                  IsEnabled="{Binding TemperatureEnabled}"
+                  Visibility="{Binding ShowTemperature, Converter={StaticResource BoolVis}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Button Style="{StaticResource RoundButton}" Content="−" ToolTip="Decrease"
+                        Command="{Binding DecreaseTemperatureCommand}" />
+                <ui:TemperatureSlider Grid.Column="1" Height="42" Margin="10,0"
+                                      Minimum="{Binding MinTemperature}" Maximum="{Binding MaxTemperature}"
+                                      Step="{Binding TemperatureStep}" Value="{Binding TargetTemperature}"
+                                      TrackBrush="{DynamicResource TrackBrush}" />
+                <Button Grid.Column="2" Style="{StaticResource RoundButton}" Content="+" ToolTip="Increase"
+                        Command="{Binding IncreaseTemperatureCommand}" />
+                <DockPanel Grid.Row="1" Grid.Column="1" Margin="12,5,12,0">
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding MaxTemperatureText}" FontSize="11"
+                               Foreground="{DynamicResource SubtleTextBrush}" />
+                    <TextBlock Text="{Binding MinTemperatureText}" FontSize="11"
+                               Foreground="{DynamicResource SubtleTextBrush}" />
+                </DockPanel>
+            </Grid>
 
-                <StackPanel Margin="3,12,3,0">
-                    <CheckBox Style="{StaticResource Switch}" Content="Swing up and down"
-                              IsChecked="{Binding SwingVertical}"
-                              Visibility="{Binding ShowSwingVertical, Converter={StaticResource BoolVis}}" />
-                    <CheckBox Style="{StaticResource Switch}" Content="Swing left and right"
-                              IsChecked="{Binding SwingHorizontal}"
-                              Visibility="{Binding ShowSwingHorizontal, Converter={StaticResource BoolVis}}" />
-                    <CheckBox Style="{StaticResource Switch}" Content="Energy saving"
-                              IsChecked="{Binding PowerSave}"
-                              Visibility="{Binding ShowPowerSave, Converter={StaticResource BoolVis}}" />
-                </StackPanel>
-
-                <StackPanel Visibility="{Binding ShowTimer, Converter={StaticResource BoolVis}}">
+            <!-- Tiles, replaced in place by the options of the tile that was opened -->
+            <Grid x:Name="TileArea" Margin="-4,12,-4,0">
+                <ItemsControl x:Name="TileGrid" ItemsSource="{Binding Tiles}" ItemTemplate="{StaticResource Tile}"
+                              RenderTransformOrigin="0.5,0.5">
+                    <ItemsControl.RenderTransform>
+                        <ScaleTransform x:Name="TileGridScale" />
+                    </ItemsControl.RenderTransform>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                <Border x:Name="Tray" Margin="4" Padding="11,10,11,11" CornerRadius="16" Opacity="0"
+                        IsHitTestVisible="False" Background="{DynamicResource CardBrush}"
+                        BorderBrush="{DynamicResource CardStrokeBrush}" BorderThickness="1">
+                    <Border.RenderTransform>
+                        <TranslateTransform x:Name="TrayShift" Y="14" />
+                    </Border.RenderTransform>
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Right" Text="{Binding TimerText}" Style="{StaticResource Caption}"
-                                   Foreground="{DynamicResource AccentBrush}" Margin="0,16,3,5" />
-                        <TextBlock Text="Turn off in" Style="{StaticResource Caption}" />
+                        <Button DockPanel.Dock="Top" Style="{StaticResource LinkButton}" HorizontalAlignment="Left"
+                                Command="{Binding CloseTrayCommand}" ToolTip="Back">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE72B;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding TrayTile.Title}" FontSize="13" FontWeight="SemiBold"
+                                           Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <ItemsControl ItemsSource="{Binding TrayTile.Options}" ItemTemplate="{StaticResource Option}"
+                                      VerticalAlignment="Center" Margin="-3,6,-3,-3">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="1" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </DockPanel>
-                    <ItemsControl ItemsSource="{Binding TimerOptions}" ItemTemplate="{StaticResource TimerOption}"
-                                  ItemsPanel="{StaticResource OneRow}" Margin="-3,0" />
-                </StackPanel>
-            </StackPanel>
+                </Border>
+            </Grid>
+
+            <TextBlock Text="{Binding FilterText}" FontSize="11" Foreground="{DynamicResource SubtleTextBrush}"
+                       HorizontalAlignment="Center" Margin="0,12,0,0"
+                       Visibility="{Binding HasFilterText, Converter={StaticResource BoolVis}}" />
 
             <!-- Temporary notice for a rejected command -->
-            <Border Background="{DynamicResource BannerBrush}" CornerRadius="10" Padding="12,8" Margin="0,14,0,0"
+            <Border Background="{DynamicResource BannerBrush}" CornerRadius="10" Padding="12,8" Margin="0,12,0,0"
                     Visibility="{Binding HasToast, Converter={StaticResource BoolVis}}">
                 <TextBlock Text="{Binding ToastText}" TextWrapping="Wrap" FontSize="13" />
             </Border>

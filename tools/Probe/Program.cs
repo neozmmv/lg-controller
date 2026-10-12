@@ -14,7 +14,9 @@ const string Usage = """
       wind  <deviceId> <SPEED>
       swing <deviceId> on|off
       save  <deviceId> on|off
-      timer <deviceId> <minutes>    0 cancels
+      timer <deviceId> <minutes>    turn-off timer; 0 cancels
+      start <deviceId> <minutes>    turn-on timer; 0 cancels
+      sleep <deviceId> <minutes>    sleep timer; 0 cancels
     """;
 
 var token = Environment.GetEnvironmentVariable("LG_THINQ_PAT");
@@ -62,7 +64,7 @@ try
         case "show":
             Console.WriteLine(caps);
             Console.WriteLine($"Modes: {string.Join(", ", caps.Modes)}");
-            Console.WriteLine($"Wind: {string.Join(", ", caps.WindStrengths)}");
+            Console.WriteLine($"Wind: {string.Join(", ", caps.AllWindStrengths)}");
             Console.WriteLine(AcStateParser.Parse(await client.GetStateAsync(id), caps));
             break;
         case "power":
@@ -85,6 +87,12 @@ try
             break;
         case "timer":
             await client.ControlAsync(id, AcCommands.StopTimer(int.Parse(arg)));
+            break;
+        case "start":
+            await client.ControlAsync(id, AcCommands.StartTimer(int.Parse(arg)));
+            break;
+        case "sleep":
+            await client.ControlAsync(id, AcCommands.SleepTimer(int.Parse(arg)));
             break;
         default:
             Console.Error.WriteLine(Usage);

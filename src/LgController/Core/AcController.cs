@@ -124,6 +124,18 @@ public sealed class AcController : IDisposable
             s => s with { StopTimerMinutes = minutes > 0 ? minutes : null },
             AcCommands.StopTimer(minutes));
 
+    public void SetStartTimer(int minutes) =>
+        Enqueue(
+            AcField.StartTimer,
+            s => s with { StartTimerMinutes = minutes > 0 ? minutes : null },
+            AcCommands.StartTimer(minutes));
+
+    public void SetSleepTimer(int minutes) =>
+        Enqueue(
+            AcField.SleepTimer,
+            s => s with { SleepTimerMinutes = minutes > 0 ? minutes : null },
+            AcCommands.SleepTimer(minutes));
+
     public void Dispose()
     {
         _disposed = true;

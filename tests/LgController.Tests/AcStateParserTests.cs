@@ -20,6 +20,54 @@ public class AcStateParserTests
         Assert.False(state.SwingHorizontal);
         Assert.False(state.PowerSave);
         Assert.Equal(90, state.StopTimerMinutes);
+        Assert.Null(state.StartTimerMinutes);
+        Assert.Equal(120, state.SleepTimerMinutes);
+        Assert.Equal(720, state.FilterUsedHours);
+        Assert.Equal(0, state.FilterLifetimeHours);
+    }
+
+    [Fact]
+    public void Parse_StartTimer_ReadsMinutes()
+    {
+        var state = AcStateParser.Parse(Samples.Parse("""
+            {"timer":{"relativeHourToStart":2,"relativeMinuteToStart":15,"relativeStartTimer":"SET",
+              "relativeStopTimer":"UNSET"}}
+            """), Caps);
+
+        Assert.Equal(135, state.StartTimerMinutes);
+        Assert.Null(state.StopTimerMinutes);
+    }
+
+    [Fact]
+    public void Parse_SleepTimerUnset_HasNoMinutes()
+    {
+        var state = AcStateParser.Parse(Samples.Parse("""{"sleepTimer":{"relativeStopTimer":"UNSET"}}"""), Caps);
+
+        Assert.Null(state.SleepTimerMinutes);
+    }
+
+    [Theory]
+    [InlineData("HIGH", "HIGH", "HIGH")]
+    [InlineData("AUTO", "LOW", "AUTO")]
+    [InlineData("LOW", "NATURE", "NATURE")]
+    public void Parse_WindStrength_PrefersDetailOnlyForDetailOnlySpeeds(string strength, string detail, string expected)
+    {
+        var caps = Caps with { WindStrengthDetails = ["NATURE"] };
+
+        var state = AcStateParser.Parse(Samples.Parse(
+            $$$"""{"airFlow":{"windStrength":"{{{strength}}}","windStrengthDetail":"{{{detail}}}"}}"""), caps);
+
+        Assert.Equal(expected, state.WindStrength);
+    }
+
+    [Fact]
+    public void Parse_OnlyWindStrengthDetail_ReadsIt()
+    {
+        var caps = Caps with { WindStrengths = [], WindStrengthDetails = ["LOW", "POWER"] };
+
+        var state = AcStateParser.Parse(Samples.Parse("""{"airFlow":{"windStrengthDetail":"POWER"}}"""), caps);
+
+        Assert.Equal("POWER", state.WindStrength);
     }
 
     [Fact]
@@ -68,5 +116,8 @@ public class AcStateParserTests
         Assert.Null(state.WindStrength);
         Assert.False(state.SwingVertical);
         Assert.Null(state.StopTimerMinutes);
+        Assert.Null(state.StartTimerMinutes);
+        Assert.Null(state.SleepTimerMinutes);
+        Assert.Null(state.FilterUsedHours);
     }
 }

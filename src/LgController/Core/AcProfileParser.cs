@@ -9,23 +9,26 @@ public static class AcProfileParser
     {
         var property = profile.Prop("property");
         var airFlow = property.Prop("airFlow");
-        var windKey = airFlow.Prop("windStrengthDetail").ValueKind == JsonValueKind.Object
-            ? "windStrengthDetail"
-            : "windStrength";
+        var windStrengths = WritableValues(airFlow.Prop("windStrength"));
         var windDirection = property.Prop("windDirection");
         var timer = property.Prop("timer");
+        var sleepTimer = property.Prop("sleepTimer");
 
         var caps = new AcCapabilities
         {
             CanPower = WritableValues(property.Prop("operation").Prop("airConOperationMode")).Contains("POWER_ON"),
             Modes = WritableValues(property.Prop("airConJobMode").Prop("currentJobMode")),
-            WindStrengthKey = windKey,
-            WindStrengths = WritableValues(airFlow.Prop(windKey)),
+            WindStrengths = windStrengths,
+            WindStrengthDetails = WritableValues(airFlow.Prop("windStrengthDetail")).Except(windStrengths).ToList(),
             CanSwingVertical = IsWritable(windDirection.Prop("rotateUpDown")),
             CanSwingHorizontal = IsWritable(windDirection.Prop("rotateLeftRight")),
             CanPowerSave = IsWritable(property.Prop("powerSave").Prop("powerSaveEnabled")),
             CanStopTimer = IsWritable(timer.Prop("relativeHourToStop")),
             CanCancelStopTimer = WritableValues(timer.Prop("relativeStopTimer")).Contains("UNSET"),
+            CanStartTimer = IsWritable(timer.Prop("relativeHourToStart")),
+            CanCancelStartTimer = WritableValues(timer.Prop("relativeStartTimer")).Contains("UNSET"),
+            CanSleepTimer = IsWritable(sleepTimer.Prop("relativeHourToStop")),
+            CanCancelSleepTimer = WritableValues(sleepTimer.Prop("relativeStopTimer")).Contains("UNSET"),
         };
 
         var units = property.Prop("temperatureInUnits").Items();

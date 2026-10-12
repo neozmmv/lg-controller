@@ -37,10 +37,14 @@ public class AcCommandsTests
             AcCommands.Temperature(Caps with { TemperatureResource = TemperatureResource.Legacy }, 23).ToJsonString());
 
     [Fact]
-    public void WindStrength_UsesProfileKey() =>
+    public void WindStrength() =>
+        Assert.Equal("""{"airFlow":{"windStrength":"AUTO"}}""", AcCommands.WindStrength(Caps, "AUTO").ToJsonString());
+
+    [Fact]
+    public void WindStrength_DetailOnlySpeed_UsesDetailKey() =>
         Assert.Equal(
-            """{"airFlow":{"windStrengthDetail":"POWER"}}""",
-            AcCommands.WindStrength(Caps with { WindStrengthKey = "windStrengthDetail" }, "POWER").ToJsonString());
+            """{"airFlow":{"windStrengthDetail":"NATURE"}}""",
+            AcCommands.WindStrength(Caps with { WindStrengthDetails = ["NATURE"] }, "NATURE").ToJsonString());
 
     [Fact]
     public void Swings()
@@ -60,4 +64,18 @@ public class AcCommandsTests
     [InlineData(0, """{"timer":{"relativeStopTimer":"UNSET"}}""")]
     public void StopTimer(int minutes, string expected) =>
         Assert.Equal(expected, AcCommands.StopTimer(minutes).ToJsonString());
+
+    [Theory]
+    [InlineData(30, """{"timer":{"relativeHourToStart":0,"relativeMinuteToStart":30}}""")]
+    [InlineData(240, """{"timer":{"relativeHourToStart":4}}""")]
+    [InlineData(0, """{"timer":{"relativeStartTimer":"UNSET"}}""")]
+    public void StartTimer(int minutes, string expected) =>
+        Assert.Equal(expected, AcCommands.StartTimer(minutes).ToJsonString());
+
+    [Theory]
+    [InlineData(60, """{"sleepTimer":{"relativeHourToStop":1}}""")]
+    [InlineData(90, """{"sleepTimer":{"relativeHourToStop":1,"relativeMinuteToStop":30}}""")]
+    [InlineData(0, """{"sleepTimer":{"relativeStopTimer":"UNSET"}}""")]
+    public void SleepTimer(int minutes, string expected) =>
+        Assert.Equal(expected, AcCommands.SleepTimer(minutes).ToJsonString());
 }
